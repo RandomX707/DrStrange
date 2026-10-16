@@ -22,6 +22,12 @@ Choose a camera before starting; stop before changing it. The list refreshes aft
 permission and device changes. Mirroring changes display only. Hiding the tab
 stops capture. Restart explicitly when returning.
 
+Compute preference defaults to **GPU with CPU fallback**. If capture is live but
+an open hand produces no detections, stop and compare with **CPU only**. This is
+a diagnostic choice, not evidence that CPU fixes a particular browser. The selected
+preference and initialized delegate are included in metric exports. Settings are
+locked during capture; stop before changing compute preference.
+
 The asset step downloads Google's official ~7.8 MB landmark detector, checks a
 committed SHA-256, and copies the pinned npm WASM runtime into `public/`. These
 ignored runtime files are included in `dist/` by Vite. It does **not** download an

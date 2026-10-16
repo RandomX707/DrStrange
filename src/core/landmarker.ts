@@ -20,8 +20,17 @@ async function createDetector(delegate: Delegate): Promise<Detector> {
 
 export async function initializeLandmarker(
   create: (delegate: Delegate) => Promise<Detector> = createDetector,
+  preferred: Delegate = 'GPU',
 ): Promise<InitializedLandmarker> {
   const started = performance.now();
+  if (preferred === 'CPU') {
+    try {
+      const detector = await create('CPU');
+      return { detector, delegate: 'CPU', initializationMs: performance.now() - started };
+    } catch (error) {
+      throw new Error(`CPU landmarker initialization failed: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+    }
+  }
   try {
     const detector = await create('GPU');
     return { detector, delegate: 'GPU', initializationMs: performance.now() - started };

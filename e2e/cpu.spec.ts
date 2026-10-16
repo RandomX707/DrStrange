@@ -20,3 +20,18 @@ test('real CPU inference works after an injected GPU initialization failure', as
   await page.getByRole('button', { name: 'Stop camera' }).click();
   expect(await page.locator('video').evaluate((video: HTMLVideoElement) => video.srcObject === null)).toBe(true);
 });
+
+test('CPU-only selection runs real inference and is locked during capture', async ({ page }) => {
+  await page.goto('/');
+  const compute = page.getByRole('combobox', { name: 'Compute preference' });
+  await compute.selectOption('CPU');
+  await page.getByRole('button', { name: 'Start camera' }).click();
+  await expect(page.getByTestId('session-status')).toHaveText('Live');
+  await expect(compute).toBeDisabled();
+  await expect(page.getByText('CPU', { exact: true })).toBeVisible();
+  await expect.poll(async () => Number(await page.getByTestId('processed-frames').textContent())).toBeGreaterThan(3);
+  await expect(page.getByText('GPU initialization failed; using CPU.', { exact: false })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Stop camera' }).click();
+  await expect(compute).toBeEnabled();
+  expect(await page.locator('video').evaluate((video: HTMLVideoElement) => video.srcObject === null)).toBe(true);
+});

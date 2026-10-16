@@ -5,7 +5,7 @@ import { LandmarkerOwner } from './core/session';
 import { startFrameLoop } from './core/frames';
 import { SessionMetrics, type MetricsSnapshot } from './core/metrics';
 import { drawOverlay } from './core/overlay';
-import type { InitializedLandmarker } from './core/landmarker';
+import type { Delegate, InitializedLandmarker } from './core/landmarker';
 import manifest from '../scripts/model-manifest.json';
 
 type Status = 'Ready' | 'Requesting camera' | 'Loading landmarks' | 'Live' | 'Stopped' | 'Error';
@@ -15,6 +15,7 @@ interface MeasurementReport {
   userAgent: string;
   source: { width: number; height: number };
   delegate: string;
+  computePreference: Delegate;
   initializationMs: number;
   startupMs: number;
   scheduler: string;
@@ -52,6 +53,7 @@ export function useCapture() {
   const [supported, setSupported] = useState(true);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [deviceId, setDeviceId] = useState('');
+  const [computePreference, setComputePreference] = useState<Delegate>('GPU');
   const [mirrored, setMirrored] = useState(true);
   const [metrics, setMetrics] = useState<MetricsSnapshot | null>(null);
   const [modelInfo, setModelInfo] = useState<Omit<InitializedLandmarker, 'detector'> | null>(null);
@@ -140,7 +142,7 @@ export function useCapture() {
       if (!await active.camera.start(deviceId || undefined) || generation !== active.generation) return;
       void refreshDevices();
       setStatus('Loading landmarks');
-      const initialized = await active.owner.start();
+      const initialized = await active.owner.start(computePreference);
       if (!initialized || generation !== active.generation) return;
       const video = videoRef.current!;
       const canvas = canvasRef.current!;
@@ -160,6 +162,7 @@ export function useCapture() {
         schemaVersion: 1, userAgent: navigator.userAgent,
         source: { width: video.videoWidth, height: video.videoHeight },
         delegate: initialized.delegate, initializationMs: initialized.initializationMs,
+        computePreference,
         startupMs: performance.now() - started,
         scheduler: typeof video.requestVideoFrameCallback === 'function' ? 'requestVideoFrameCallback' : 'requestAnimationFrame',
         model: manifest, tasksVisionVersion: '1.1.1',
@@ -213,5 +216,5 @@ export function useCapture() {
   };
   const changeMirror = (value: boolean) => { mirroredRef.current = value; setMirrored(value); };
   const busy = ['Requesting camera', 'Loading landmarks', 'Live'].includes(status);
-  return { videoRef, canvasRef, status, error, notice, supported, devices, deviceId, setDeviceId, mirrored, changeMirror, metrics, modelInfo, hands, start, stop, busy, refreshDevices, exportMetrics };
+  return { videoRef, canvasRef, status, error, notice, supported, devices, deviceId, setDeviceId, computePreference, setComputePreference, mirrored, changeMirror, metrics, modelInfo, hands, start, stop, busy, refreshDevices, exportMetrics };
 }

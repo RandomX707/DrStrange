@@ -12,6 +12,9 @@
   ending release resources. No audio is requested.
 - `src/core/landmarker.ts`: VIDEO mode, `numHands: 2`, GPU initialization then CPU
   fallback; both failure messages remain visible. All confidence settings 0.5.
+  An explicit CPU-only preference skips GPU initialization for controlled browser
+  comparison. The default remains GPU-first; successful GPU initialization with
+  empty detections does not silently trigger a different inference path.
 - `src/core/session.ts`: closes active or late-resolving landmark tasks after Stop.
 - `src/core/frames.ts`: requestVideoFrameCallback preferred; rAF fallback checks
   video.currentTime. No duplicate decoded frames or overlapping synchronous calls.

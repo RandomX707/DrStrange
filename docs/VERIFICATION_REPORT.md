@@ -11,7 +11,7 @@ Apple M5 and 17,179,869,184 total memory bytes (16 GiB). This is hardware metada
 not measured application CPU or memory consumption. Browser: Playwright Chromium
 156.0.8078.4, headless. A WebGL capability probe reported **ANGLE / Vulkan /
 SwiftShader software rendering**. Selecting MediaPipe's GPU delegate here does
-not imply use of the M5 GPU. macOS GUI browsers have not been verified.
+not imply use of the M5 GPU. Later Safari manual capture observations are recorded below; physical landmark acceptance remains open.
 
 All 7 unit files / 19 tests pass. TypeScript, ESLint and production build pass.
 Browser tests cover real synthetic capture/model inference, export/restart/stop,
@@ -149,3 +149,40 @@ late-initialization test gap was addressed by spying on the real task close meth
 waiting for actual close, then checking stopped state and detached video. No test
 hook was added to product code. This strengthens cleanup evidence without claiming
 physical camera verification. Phase 1B remains unimplemented and unauthorized.
+
+
+## Manual Safari follow-up — 2026-10-16
+
+Local server: HTTP 200 at http://127.0.0.1:5173/. Installed Safari bundle reports
+26.6.2; `sw_vers -productVersion` reports 26.6.2. These are local version probes,
+not an exported Safari user-agent. The user reports real live video in Safari,
+then **Live / 0 hands detected / no error with one open hand visible**.
+
+| Requested host check | Current evidence |
+| --- | --- |
+| Camera opens and shows live video | PASS — user-reported Safari observation. |
+| All fingers and wrist align | OPEN / failing observation — no landmarks appear. |
+| Physical left/right labels stable and correctly interpreted | NOT VERIFIED — blocked by absent detections. |
+| Mirroring preserves landmark alignment | NOT VERIFIED — blocked by absent detections. |
+| Two hands detected together | NOT VERIFIED. |
+| Stop releases macOS camera indicator | NOT VERIFIED. |
+| Sustained UI responsiveness | NOT VERIFIED on real Safari capture. |
+
+The local model still matches the committed SHA-256; model and WASM requests both
+return HTTP 200. This excludes missing/corrupted local model bytes, but does not
+prove correct browser inference. GPU initialization success alone cannot exclude
+empty/incorrect inference results. A CPU-only compute preference now permits comparison of
+the same camera without changing model, thresholds or coordinate transforms.
+Do not label it a Safari fix until the user repeats the real-hand check. No
+frames, screenshots of people, or landmarks have been recorded.
+
+
+Follow-up change verification: `npm test` → 7 files / **22 passed**;
+`npm run typecheck`, `npm run lint`, `npm run build` → exit 0;
+`PLAYWRIGHT_BROWSERS_PATH=.playwright npm run test:e2e` → **6 passed in 27.6 s**.
+Three new unit tests first failed on missing CPU-only behavior/preference forwarding.
+The new browser control test first failed because the combobox was absent, then
+passed with real CPU inference on synthetic video. Independent diff review found
+no important correctness/lifecycle issues. A real Safari CPU-only result is still
+pending; these automated results do not establish that absent hand detections are
+fixed. The local server remains running for the user's checks.

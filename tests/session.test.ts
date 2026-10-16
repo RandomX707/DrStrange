@@ -19,3 +19,11 @@ it('closes an active detector exactly once on repeated cleanup', async () => {
   owner.stop(); owner.stop();
   expect(detector.close).toHaveBeenCalledOnce();
 });
+it('passes the compute preference through to model initialization', async () => {
+  const detector = { close: vi.fn(), detectForVideo: vi.fn() };
+  const initialize = vi.fn().mockResolvedValue({ detector, delegate: 'CPU', initializationMs: 1 });
+  const owner = new LandmarkerOwner(initialize);
+  await owner.start('CPU');
+  expect(initialize).toHaveBeenCalledWith('CPU');
+  owner.stop();
+});
