@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-10-16T10:34:27.171Z",
+  "browser": "156.0.8078.4",
+  "synthetic": false,
+  "status": "blocked",
+  "result": "blocked",
+  "reason": "NotSupportedError: Not supported"
+}

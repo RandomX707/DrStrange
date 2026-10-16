@@ -1,0 +1,14 @@
+import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+const url = 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
+await mkdir('public/mediapipe', { recursive: true });
+await mkdir('public/models', { recursive: true });
+await cp('node_modules/@mediapipe/tasks-vision/wasm', 'public/mediapipe/wasm', { recursive: true });
+const response = await fetch(url);
+if (!response.ok) throw new Error(`Official model download failed: HTTP ${response.status}`);
+const model = Buffer.from(await response.arrayBuffer());
+const sha256 = createHash('sha256').update(model).digest('hex');
+const manifest = JSON.parse(await readFile('scripts/model-manifest.json', 'utf8'));
+if (sha256 !== manifest.sha256) throw new Error(`Model checksum mismatch: ${sha256}. Review upstream before updating the manifest.`);
+await writeFile('public/models/hand_landmarker.task', model);
+console.log(`Prepared pinned MediaPipe WASM and official hand-landmarker v1: ${model.length} bytes; sha256 ${sha256}`);

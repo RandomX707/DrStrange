@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.playwright/
+playwright-report/
+test-results/
+artifacts/
+public/mediapipe/
+public/models/*.task
+.superpowers/
+.env*
+.DS_Store
+*.local

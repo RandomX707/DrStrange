@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+  "source": {
+    "width": 640,
+    "height": 480
+  },
+  "delegate": "GPU",
+  "initializationMs": 151.69999998807907,
+  "startupMs": 215.7999999821186,
+  "scheduler": "requestVideoFrameCallback",
+  "model": {
+    "url": "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+    "revision": "hand_landmarker/float16/1",
+    "sha256": "fbc2a30080c3c557093b5ddfc334698132eb341044ccee322ccf8bcf3607cde1",
+    "bytes": 7819105,
+    "verifiedOn": "2026-10-16",
+    "purpose": "Official pretrained landmark localization only; no fingerspelling classifier"
+  },
+  "tasksVisionVersion": "1.1.1",
+  "notes": "Aggregate local session metrics. FPS is session-average callbacks/processed frames; rAF does not guarantee painted frames. Latencies use the latest 1800 inferences. No camera frames or landmarks included.",
+  "metrics": {
+    "elapsedSeconds": 127.39710000002384,
+    "processedFrames": 1378,
+    "processedFps": 10.816572747729282,
+    "renderedCallbacks": 1902,
+    "renderedFps": 14.929696201873073,
+    "inference": {
+      "latestMs": 105.59999999403954,
+      "meanMs": 85.72271407844366,
+      "p50Ms": 78.19999998807907,
+      "p95Ms": 114.30000001192093,
+      "sampleCount": 1378
+    },
+    "renderGapP95Ms": 116.69999999999709
+  },
+  "recordedAt": "2026-10-16T10:36:04.141Z",
+  "responsiveness": {
+    "longTasksSupported": true,
+    "longTaskCount": 1378,
+    "longTaskTotalMs": 117966
+  }
+}
